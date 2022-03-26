@@ -38,11 +38,8 @@ class PostController extends AbstractController
     public function create(Request $request){
         $post = new Post();
         //$post->setTitle("This is going to be a title");
-
         $form = $this->createForm(PostType::class, $post);
-
         $form->handleRequest($request);
-
         if ($form->isSubmitted()){
             //return a response
             $em = $this->getDoctrine()->getManager();  //manager là nơi quản lý object, biểu thị là khi tạo record mới, ta cần gọi từ trong đó ra, rồi dùng persit để đăng ký vào mangager đó.
@@ -90,7 +87,3 @@ class PostController extends AbstractController
 }
 
 
-
-//
-//Hoc den 2:08
-//https://www.youtube.com/watch?v=Bo0guUbL5uo&t=6335s
