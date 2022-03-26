@@ -91,6 +91,3 @@ class PostController extends AbstractController
 
 
 
-//
-//Hoc den 2:08
-//https://www.youtube.com/watch?v=Bo0guUbL5uo&t=6335s
