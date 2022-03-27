@@ -21,6 +21,22 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
+    public function findPostWithCategory(int $id){
+        $qb = $this->createQueryBuilder('p');
+        $qb->select('p.title')   //Chỗ nào gọi cái này thì sẽ lấy title của chỗ đó. *cụ thể là post sẽ dùng.
+            ->addSelect('p.id AS post_id')
+            ->addSelect('c.name')
+            ->addSelect('c.id AS category_id')
+            ->innerJoin('p.category', 'c')
+            ->where('p.id = :id')
+            ->setParameter('id', $id)
+        ;
+
+        return $qb->getQuery()->getResult();
+
+    }
+
+
     /**
      * @throws ORMException
      * @throws OptimisticLockException
