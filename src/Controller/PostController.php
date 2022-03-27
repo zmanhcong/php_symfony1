@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use App\Services\FileUploader;
 use http\Message;
+use PhpParser\Node\Scalar\MagicConst\File;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +38,7 @@ class PostController extends AbstractController
     /**
      * @Route("/create", name="create")
      */
-    public function create(Request $request){
+    public function create(Request $request, FileUploader $fileUploader){
         $post = new Post();
         //$post->setTitle("This is going to be a title");
 
@@ -51,18 +53,14 @@ class PostController extends AbstractController
             /** @var UploadedFile $file */
             $file = $request->files->get('post')['attachment'];
             if($file){
-                $filename = md5(uniqid()) . '.' . $file->guessClientExtension();  //guessClientExtension lấy từ @var UploadFile
 
-                $file->move(
-                    $this->getParameter('uploads_dir'),
-                  $filename
-                );
-
+                $filename = $fileUploader->uploadFile($file);
                 $post->setImage($filename);
                 //dump($post);
                 $em->persist($post);
                 $em->flush();  //cmd nay la de reflect created data len database
             }
+
             return $this->redirect($this->generateUrl('post.index'));
         }
         //return new Response("post was created");
@@ -75,8 +73,14 @@ class PostController extends AbstractController
     /**
      * @Route("/show/{id}", name="show")
      */
-    public function show(Post $post)
+    public function show(Post $post)    //Post is entity/Post.php (database)
+//    public function show($id, PostRepository $postRepository)
     {
+//        $post = $postRepository->findPostWithCategory($id);
+//        dump($post);
+
+
+
         //crete the show view
         return $this->render("post/show.html.twig", [
             "post" => $post
