@@ -7,6 +7,7 @@ use App\Form\PostType;
 use App\Repository\PostRepository;
 use http\Message;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,7 +40,7 @@ class PostController extends AbstractController
         $post = new Post();
         //$post->setTitle("This is going to be a title");
 
-        $form = $this->createForm(PostType::class, $post);
+        $form = $this->createForm(PostType::class, $post);  //createForm từ src/Form/PostType.php
 
         $form->handleRequest($request);
 
@@ -47,10 +48,21 @@ class PostController extends AbstractController
             //return a response
             $em = $this->getDoctrine()->getManager();  //manager là nơi quản lý object, biểu thị là khi tạo record mới, ta cần gọi từ trong đó ra, rồi dùng persit để đăng ký vào mangager đó.
 
-            //dump($post);
-            $em->persist($post);
-            $em->flush();  //cmd nay la de reflect created data len database
+            /** @var UploadedFile $file */
+            $file = $request->files->get('post')['attachment'];
+            if($file){
+                $filename = md5(uniqid()) . '.' . $file->guessClientExtension();  //guessClientExtension lấy từ @var UploadFile
 
+                $file->move(
+                    $this->getParameter('uploads_dir'),
+                  $filename
+                );
+
+                $post->setImage($filename);
+                //dump($post);
+                $em->persist($post);
+                $em->flush();  //cmd nay la de reflect created data len database
+            }
             return $this->redirect($this->generateUrl('post.index'));
         }
         //return new Response("post was created");
