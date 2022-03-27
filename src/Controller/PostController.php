@@ -75,7 +75,8 @@ class PostController extends AbstractController
     /**
      * @Route("/show/{id}", name="show")
      */
-    public function show(Post $post) {
+    public function show(Post $post)
+    {
         //crete the show view
         return $this->render("post/show.html.twig", [
             "post" => $post
@@ -103,6 +104,3 @@ class PostController extends AbstractController
 
 
 
-//
-//Hoc den 2:08
-//https://www.youtube.com/watch?v=Bo0guUbL5uo&t=6335s
